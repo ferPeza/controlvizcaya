@@ -151,3 +151,5 @@
 .loginWrap{max-width:470px;margin:6vh auto 0}.loginBrand{margin-bottom:18px}.loginBrand p{color:var(--muted);margin:7px 0 0}.loginTitle{font-size:32px;margin:0;letter-spacing:-.03em}
 @media(max-width:900px){.monitorGrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:640px){.monitorHeader{align-items:flex-start;flex-direction:column}.monitorSummary{width:100%}.monitorSummary>div{flex:1}.monitorGrid{grid-template-columns:1fr}.monitorLegend{margin-left:0;width:100%;}.monitorFilters select{flex:1;min-width:180px}}
+
+.filterSelect{border:1px solid var(--border);background:var(--surface-2);color:var(--ink);border-radius:9px;padding:9px 13px;font-weight:700;font-size:12.5px;min-width:180px}
