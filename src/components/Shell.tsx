@@ -6,10 +6,11 @@ interface ShellProps {
   profesorNombre?: string;
   crumb?: ReactNode;
   onGear?: () => void;
+  onLogout?: () => void;
   children: ReactNode;
 }
 
-export default function Shell({ profesorNombre, crumb, onGear, children }: ShellProps) {
+export default function Shell({ profesorNombre, crumb, onGear, onLogout, children }: ShellProps) {
   return (
     <>
       <header className={styles.appbar}>
@@ -18,6 +19,7 @@ export default function Shell({ profesorNombre, crumb, onGear, children }: Shell
             Control de salidas<span className={styles.brandDot}>.</span>
           </p>
           {profesorNombre && <span className={styles.who}>{profesorNombre}</span>}
+          {onLogout && <button className={styles.logout} onClick={onLogout} title="Cerrar sesión">Salir</button>}
           {onGear && (
             <button className={styles.gear} onClick={onGear} aria-label="Mi perfil" title="Mi perfil">
               ⚙
