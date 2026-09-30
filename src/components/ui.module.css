@@ -85,6 +85,21 @@
   color: #fff;
 }
 
+.btnTutor {
+  background: var(--tutor);
+  color: #fff;
+}
+
+.btnPsicologa {
+  background: var(--psicologa);
+  color: #fff;
+}
+
+.btnCoordinacion {
+  background: var(--coordinacion);
+  color: #fff;
+}
+
 .btnOk {
   background: var(--ok);
   color: #fff;
@@ -99,6 +114,18 @@
 
 .btnIcon:hover:not(:disabled) {
   color: var(--danger);
+}
+
+.exitButtons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: flex-end;
+}
+
+.exitButtons .btn {
+  padding: 8px 10px;
+  font-size: 12px;
 }
 
 .addRow {
@@ -268,4 +295,21 @@ th {
   font-variant-numeric: tabular-nums;
   width: 22px;
   display: inline-block;
+}
+
+@media (max-width: 760px) {
+  .row {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .rowMain {
+    min-width: calc(100% - 28px);
+  }
+
+  .exitButtons {
+    width: 100%;
+    justify-content: flex-start;
+    padding-left: 18px;
+  }
 }

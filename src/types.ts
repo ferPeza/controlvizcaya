@@ -19,4 +19,5 @@ export interface Registro {
   alumno_id: string;
   salida: string;
   regreso: string | null;
+  motivo: "salio" | "tutor" | "psicologa" | "coordinacion";
 }
