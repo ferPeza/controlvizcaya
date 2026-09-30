@@ -135,3 +135,21 @@
   .statsTable th,.statsTable td { padding:10px 9px; }
   .studentCell { min-width:220px; white-space:normal; }
 }
+
+.monitorDashboard{width:100%}
+.monitorHeader{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;margin-bottom:18px}
+.monitorSummary{display:flex;gap:10px}
+.monitorSummary>div{min-width:105px;padding:12px 16px;background:var(--surface);border:1px solid var(--border);border-radius:12px;text-align:center}
+.monitorSummary strong{display:block;font-size:25px;line-height:1.1}.monitorSummary span{display:block;color:var(--muted);font-size:11px;margin-top:3px;font-weight:700}.monitorAlert{border-color:color-mix(in srgb,var(--danger) 45%,var(--border))!important}.monitorAlert strong{color:var(--danger)}
+.monitorFilters{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:16px}
+.monitorFilters label{font-size:12px;font-weight:800;color:var(--muted)}.monitorFilters select{border:1px solid var(--border);background:var(--surface-2);color:var(--ink);border-radius:9px;padding:8px 11px;font-weight:700}
+.monitorLegend{margin-left:auto;display:flex;align-items:center;gap:7px;color:var(--muted);font-size:11px}.monitorLegend i{width:9px;height:9px;border-radius:50%;display:inline-block}.legendGreen{background:#35a853}.legendYellow{background:#d6a800}.legendRed{background:#d93025}
+.monitorGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.monitorCard{background:var(--surface);border:1px solid var(--border);border-top:4px solid var(--time-color);border-radius:14px;padding:18px;box-shadow:var(--shadow);transition:border-color .4s,background .4s}
+.monitorCardTop{display:flex;justify-content:space-between;gap:8px;align-items:center}.monitorGroup{font-weight:800;font-size:12px;background:var(--surface-2);border-radius:7px;padding:5px 8px}.monitorReason{font-size:11px;font-weight:800;color:var(--muted)}
+.monitorCard h2{font-size:19px;line-height:1.2;margin:17px 0 10px;min-height:46px}.monitorTime{font-size:31px;font-weight:850;letter-spacing:-.03em;transition:color .5s}.monitorTime small{font-size:12px;font-weight:700}.monitorBar{height:7px;background:var(--surface-2);border-radius:999px;overflow:hidden;margin:11px 0}.monitorBar span{display:block;height:100%;border-radius:inherit;transition:width .5s,background-color .5s}.monitorCard p{margin:0;color:var(--muted);font-size:11px}
+.loginWrap{max-width:470px;margin:6vh auto 0}.loginBrand{margin-bottom:18px}.loginBrand p{color:var(--muted);margin:7px 0 0}.loginTitle{font-size:32px;margin:0;letter-spacing:-.03em}
+@media(max-width:900px){.monitorGrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:640px){.monitorHeader{align-items:flex-start;flex-direction:column}.monitorSummary{width:100%}.monitorSummary>div{flex:1}.monitorGrid{grid-template-columns:1fr}.monitorLegend{margin-left:0;width:100%;}.monitorFilters select{flex:1;min-width:180px}}
+
+.filterSelect{border:1px solid var(--border);background:var(--surface-2);color:var(--ink);border-radius:9px;padding:9px 13px;font-weight:700;font-size:12.5px;min-width:180px}
