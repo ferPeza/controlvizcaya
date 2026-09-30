@@ -15,7 +15,7 @@ export default function Shell({ profesorNombre, crumb, onGear, children }: Shell
       <header className={styles.appbar}>
         <div className={styles.appbarInner}>
           <p className={styles.brand}>
-            Pase de Baño<span className={styles.brandDot}>.</span>
+            Control de salidas<span className={styles.brandDot}>.</span>
           </p>
           {profesorNombre && <span className={styles.who}>{profesorNombre}</span>}
           {onGear && (
