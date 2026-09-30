@@ -20,7 +20,7 @@ export default function App(){
  function elegirGrupo(g:Grupo){setGrupo(g);setVista("alumnos")}
  if(!profesor||vista==="login")return <Shell><Login onLogin={login}/></Shell>;
  const crumb=vista==="monitor"?null:vista==="perfil"?"Mi perfil":vista==="grupos"?null:vista==="alumnos"&&grupo?<><span className={ui.crumbLink} onClick={()=>setVista("grupos")}>Mis grupos</span><span>›</span><span>{grupo.nombre}</span></>:vista==="stats"?<span className={ui.crumbLink} onClick={()=>setVista(grupo?"alumnos":"grupos")}>‹ Volver</span>:null;
- return <Shell profesorNombre={profesor.nombre} crumb={crumb} onGear={()=>setVista("perfil")}>{profesor.rol==="monitor"?<Monitor profesor={profesor}/>:<>
+ return <Shell profesorNombre={profesor.nombre} crumb={crumb} onGear={()=>setVista("perfil")} onLogout={logout}>{profesor.rol==="monitor" && vista==="monitor"?<Monitor profesor={profesor}/>:<>
  {vista==="perfil"&&<Perfil profesor={profesor} onSaved={perfilGuardado} onLogout={logout}/>}
  {vista==="grupos"&&<Grupos profesor={profesor} onSelect={elegirGrupo}/>}
  {vista==="alumnos"&&grupo&&<><div className={ui.tabs}><button className={`${ui.tab} ${ui.tabActive}`}>Alumnos</button><button className={ui.tab} onClick={()=>setVista("stats")}>Estadísticas</button></div><Alumnos grupo={grupo}/></>}
