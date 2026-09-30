@@ -18,7 +18,17 @@ export default function Monitor({profesor:_profesor}:MonitorProps){
   const list:Salida[]=(rows??[]).map((r:any)=>({id:r.id,alumno_id:r.alumno_id,nombre:r.bano_alumnos.nombre,grupo_id:r.bano_alumnos.grupo_id,grupo:r.bano_alumnos.bano_grupos.nombre,salida:r.salida,motivo:(r.motivo??"salio") as Motivo}));
   setSalidas(list); setGrupos(Array.from(new Map(list.map(x=>[x.grupo_id,{id:x.grupo_id,nombre:x.grupo}])).values()).sort((a,b)=>a.nombre.localeCompare(b.nombre))); setLoading(false);
  }
- useEffect(()=>{cargar();const t=setInterval(()=>setNow(Date.now()),15000),r=setInterval(cargar,30000);return()=>{clearInterval(t);clearInterval(r)}},[]);
+ useEffect(()=>{
+ cargar();
+ const t=setInterval(()=>setNow(Date.now()),15000);
+ const r=setInterval(cargar,30000);
+ const channel=supabase.channel("monitor-salidas")
+  .on("postgres_changes",{event:"*",schema:"public",table:"bano_registros"},()=>{cargar()})
+  .on("postgres_changes",{event:"*",schema:"public",table:"bano_alumnos"},()=>{cargar()})
+  .on("postgres_changes",{event:"*",schema:"public",table:"bano_grupos"},()=>{cargar()})
+  .subscribe();
+ return()=>{clearInterval(t);clearInterval(r);supabase.removeChannel(channel)};
+},[]);
  const visibles=useMemo(()=>grupo==="todos"?salidas:salidas.filter(s=>s.grupo_id===grupo),[salidas,grupo]);
  const demorados=visibles.filter(s=>minutosDesde(s.salida,now)>5).length;
  return <div className={ui.monitorDashboard}>
