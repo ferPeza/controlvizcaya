@@ -8,6 +8,22 @@ interface AlumnosProps {
   grupo: Grupo;
 }
 
+type MotivoSalida = "salio" | "tutor" | "psicologa" | "coordinacion";
+
+const MOTIVOS: Array<{ key: MotivoSalida; label: string; className: string }> = [
+  { key: "salio", label: "Salió", className: ui.btnOut },
+  { key: "tutor", label: "Tutor", className: ui.btnTutor },
+  { key: "psicologa", label: "Psicóloga", className: ui.btnPsicologa },
+  { key: "coordinacion", label: "Coordinación", className: ui.btnCoordinacion },
+];
+
+const MOTIVO_LABEL: Record<MotivoSalida, string> = {
+  salio: "Salió",
+  tutor: "Tutor",
+  psicologa: "Psicóloga",
+  coordinacion: "Coordinación",
+};
+
 function fmtHora(iso: string) {
   return new Date(iso).toLocaleTimeString("es-MX", { hour: "2-digit", minute: "2-digit" });
 }
@@ -23,15 +39,18 @@ export default function Alumnos({ grupo }: AlumnosProps) {
       .select("id,nombre,grupo_id")
       .eq("grupo_id", grupo.id)
       .order("nombre", { ascending: true });
+
     const lista = alData ?? [];
     setAlumnos(lista);
+
     if (lista.length) {
       const ids = lista.map((a) => a.id);
       const { data: regData } = await supabase
         .from("bano_registros")
-        .select("id,alumno_id,salida,regreso")
+        .select("id,alumno_id,salida,regreso,motivo")
         .in("alumno_id", ids)
         .order("salida", { ascending: false });
+
       const map: Record<string, Registro> = {};
       (regData ?? []).forEach((r) => {
         if (!map[r.alumno_id]) map[r.alumno_id] = r;
@@ -56,13 +75,13 @@ export default function Alumnos({ grupo }: AlumnosProps) {
   }
 
   async function eliminar(a: Alumno) {
-    if (!confirm(`¿Eliminar a ${a.nombre}? Se borrará también su historial de baño.`)) return;
+    if (!confirm("¿Eliminar a " + a.nombre + "? Se borrará también su historial de baño.")) return;
     await supabase.from("bano_alumnos").delete().eq("id", a.id);
     cargar();
   }
 
-  async function salir(a: Alumno) {
-    await supabase.from("bano_registros").insert({ alumno_id: a.id });
+  async function salir(a: Alumno, motivo: MotivoSalida) {
+    await supabase.from("bano_registros").insert({ alumno_id: a.id, motivo });
     cargar();
   }
 
@@ -83,26 +102,45 @@ export default function Alumnos({ grupo }: AlumnosProps) {
           {alumnos.map((a) => {
             const reg = ultimos[a.id];
             const afuera = !!(reg && !reg.regreso);
+            const motivo = (reg?.motivo as MotivoSalida | undefined) ?? "salio";
+
             return (
               <div className={ui.row} key={a.id}>
-                <span className={`${ui.dot} ${afuera ? ui.dotOut : reg?.regreso ? ui.dotOk : ""}`} />
+                <span className={ui.dot + (afuera ? " " + ui.dotOut : reg?.regreso ? " " + ui.dotOk : "")} />
                 <div className={ui.rowMain}>
                   <div className={ui.rowName}>{a.nombre}</div>
-                  {afuera && reg && <div className={ui.rowSub}>Fuera desde {fmtHora(reg.salida)}</div>}
+                  {afuera && reg && (
+                    <div className={ui.rowSub}>
+                      {MOTIVO_LABEL[motivo]} · Fuera desde {fmtHora(reg.salida)}
+                    </div>
+                  )}
                   {!afuera && reg?.regreso && (
                     <div className={ui.rowSub}>
-                      Salió {fmtHora(reg.salida)} · Regresó {fmtHora(reg.regreso)} ·{" "}
+                      {MOTIVO_LABEL[motivo]} · Salió {fmtHora(reg.salida)} · Regresó {fmtHora(reg.regreso)} ·{" "}
                       {Math.max(0, Math.round((new Date(reg.regreso).getTime() - new Date(reg.salida).getTime()) / 60000))} min
                     </div>
                   )}
                 </div>
-                <button className={`${ui.btn} ${ui.btnOut}`} disabled={afuera} onClick={() => salir(a)}>
-                  Salió
-                </button>
-                <button className={`${ui.btn} ${ui.btnOk}`} disabled={!afuera} onClick={() => reg && regresar(reg)}>
+
+                <div className={ui.exitButtons}>
+                  {MOTIVOS.map((m) => (
+                    <button
+                      key={m.key}
+                      className={ui.btn + " " + m.className}
+                      disabled={afuera}
+                      onClick={() => salir(a, m.key)}
+                      title={"Registrar salida por " + m.label}
+                    >
+                      {m.label}
+                    </button>
+                  ))}
+                </div>
+
+                <button className={ui.btn + " " + ui.btnOk} disabled={!afuera} onClick={() => reg && regresar(reg)}>
                   Regresó
                 </button>
-                <button className={`${ui.btn} ${ui.btnIcon}`} onClick={() => eliminar(a)} title="Eliminar alumno">
+
+                <button className={ui.btn + " " + ui.btnIcon} onClick={() => eliminar(a)} title="Eliminar alumno">
                   ✕
                 </button>
               </div>
@@ -110,6 +148,7 @@ export default function Alumnos({ grupo }: AlumnosProps) {
           })}
         </div>
       )}
+
       <div className={ui.addRow}>
         <input
           value={nuevo}
@@ -117,7 +156,7 @@ export default function Alumnos({ grupo }: AlumnosProps) {
           placeholder="Nombre del alumno"
           onKeyDown={(e) => e.key === "Enter" && agregar()}
         />
-        <button className={`${ui.btn} ${ui.btnGhost}`} onClick={agregar}>
+        <button className={ui.btn + " " + ui.btnGhost} onClick={agregar}>
           Agregar
         </button>
       </div>
