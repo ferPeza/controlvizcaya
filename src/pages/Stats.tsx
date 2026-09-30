@@ -37,6 +37,8 @@ const MOTIVO_LABEL: Record<Motivo, string> = {
 export default function Stats({ profesor }: StatsProps) {
   const [periodo, setPeriodo] = useState<Periodo>("semana");
   const [motivo, setMotivo] = useState<FiltroMotivo>("todos");
+  const [grupoFiltro, setGrupoFiltro] = useState("todos");
+  const [grupos, setGrupos] = useState<Array<{id:string;nombre:string}>>([]);
   const [filas, setFilas] = useState<Fila[] | null>(null);
   const [sinGrupos, setSinGrupos] = useState(false);
   const [totalSalidas, setTotalSalidas] = useState(0);
@@ -46,7 +48,7 @@ export default function Stats({ profesor }: StatsProps) {
   useEffect(() => {
     cargar();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [periodo, motivo, profesor.id]);
+  }, [periodo, motivo, grupoFiltro, profesor.id]);
 
   async function cargar() {
     setFilas(null);
@@ -56,6 +58,11 @@ export default function Stats({ profesor }: StatsProps) {
       .eq("profesor_id", profesor.id);
 
     const grupoIds = (links ?? []).map((l) => l.grupo_id);
+    const idsConNombre = (links ?? []).map((l:any) => l.grupo_id);
+    if (idsConNombre.length) {
+      const { data: gs } = await supabase.from("bano_grupos").select("id,nombre").in("id", idsConNombre);
+      setGrupos((gs ?? []).sort((a,b) => a.nombre.localeCompare(b.nombre)));
+    } else setGrupos([]);
     if (!grupoIds.length) {
       setSinGrupos(true);
       setFilas([]);
@@ -83,6 +90,7 @@ export default function Stats({ profesor }: StatsProps) {
     (rows ?? []).forEach((r: any) => {
       const al = r.bano_alumnos;
       if (!al || !grupoIds.includes(al.grupo_id)) return;
+      if (grupoFiltro !== "todos" && al.grupo_id !== grupoFiltro) return;
 
       const m = (r.motivo ?? "salio") as Motivo;
       if (motivo !== "todos" && m !== motivo) return;
@@ -166,6 +174,16 @@ export default function Stats({ profesor }: StatsProps) {
                 {p === "semana" ? "7 días" : p === "mes" ? "30 días" : "90 días"}
               </button>
             ))}
+          </div>
+        </div>
+
+        <div className={ui.filterBlock}>
+          <span className={ui.filterLabel}>Grupo</span>
+          <div className={ui.filterGroup}>
+            <select className={ui.filterSelect} value={grupoFiltro} onChange={(e) => setGrupoFiltro(e.target.value)}>
+              <option value="todos">Todos los grupos</option>
+              {grupos.map((g) => <option key={g.id} value={g.id}>{g.nombre}</option>)}
+            </select>
           </div>
         </div>
 
