@@ -10,11 +10,11 @@ interface AlumnosProps {
 
 type MotivoSalida = "salio" | "tutor" | "psicologa" | "coordinacion";
 
-const MOTIVOS: Array<{ key: MotivoSalida; label: string; className: string }> = [
-  { key: "salio", label: "Salió", className: ui.btnOut },
-  { key: "tutor", label: "Tutor", className: ui.btnTutor },
-  { key: "psicologa", label: "Psicóloga", className: ui.btnPsicologa },
-  { key: "coordinacion", label: "Coordinación", className: ui.btnCoordinacion },
+const MOTIVOS: Array<{ key: MotivoSalida; label: string; className: string; short: string }> = [
+  { key: "salio", label: "Salió", className: ui.btnOut, short: "Salió" },
+  { key: "tutor", label: "Tutor", className: ui.btnTutor, short: "Tutor" },
+  { key: "psicologa", label: "Psicóloga", className: ui.btnPsicologa, short: "Psicóloga" },
+  { key: "coordinacion", label: "Coordinación", className: ui.btnCoordinacion, short: "Coordinación" },
 ];
 
 const MOTIVO_LABEL: Record<MotivoSalida, string> = {
@@ -91,75 +91,94 @@ export default function Alumnos({ grupo }: AlumnosProps) {
   }
 
   return (
-    <div className={ui.card}>
-      <h2 className={ui.cardTitle}>{grupo.nombre}</h2>
+    <div className={ui.dashboard}>
+      <section className={ui.pageIntro}>
+        <div>
+          <span className={ui.eyebrow}>GRUPO</span>
+          <h1 className={ui.pageTitle}>{grupo.nombre}</h1>
+          <p className={ui.pageSubtitle}>Registra y consulta las salidas de tus alumnos.</p>
+        </div>
+        {alumnos && <div className={ui.countBadge}>{alumnos.length} alumnos</div>}
+      </section>
+
       {alumnos === null ? (
-        <p className={ui.empty}>Cargando…</p>
+        <div className={ui.card}><p className={ui.empty}>Cargando alumnos…</p></div>
       ) : alumnos.length === 0 ? (
-        <p className={ui.empty}>Sin alumnos todavía. Agrega la lista abajo.</p>
+        <div className={ui.card}><p className={ui.empty}>Sin alumnos todavía. Agrega la lista abajo.</p></div>
       ) : (
-        <div className={ui.list}>
-          {alumnos.map((a) => {
+        <div className={ui.studentList}>
+          {alumnos.map((a, index) => {
             const reg = ultimos[a.id];
             const afuera = !!(reg && !reg.regreso);
             const motivo = (reg?.motivo as MotivoSalida | undefined) ?? "salio";
 
             return (
-              <div className={ui.row} key={a.id}>
-                <span className={ui.dot + (afuera ? " " + ui.dotOut : reg?.regreso ? " " + ui.dotOk : "")} />
-                <div className={ui.rowMain}>
-                  <div className={ui.rowName}>{a.nombre}</div>
-                  {afuera && reg && (
-                    <div className={ui.rowSub}>
-                      {MOTIVO_LABEL[motivo]} · Fuera desde {fmtHora(reg.salida)}
-                    </div>
-                  )}
-                  {!afuera && reg?.regreso && (
-                    <div className={ui.rowSub}>
-                      {MOTIVO_LABEL[motivo]} · Salió {fmtHora(reg.salida)} · Regresó {fmtHora(reg.regreso)} ·{" "}
-                      {Math.max(0, Math.round((new Date(reg.regreso).getTime() - new Date(reg.salida).getTime()) / 60000))} min
-                    </div>
-                  )}
+              <article className={`${ui.studentCard} ${afuera ? ui.studentCardOut : ""}`} key={a.id}>
+                <div className={ui.studentIdentity}>
+                  <span className={`${ui.studentNumber} ${afuera ? ui.studentNumberOut : ""}`}>{index + 1}</span>
+                  <div>
+                    <div className={ui.studentName}>{a.nombre}</div>
+                    {afuera && reg && (
+                      <div className={ui.statusLine}>
+                        <span className={ui.liveDot} />
+                        {MOTIVO_LABEL[motivo]} · Fuera desde {fmtHora(reg.salida)}
+                      </div>
+                    )}
+                    {!afuera && reg?.regreso && (
+                      <div className={ui.statusLine}>
+                        Última salida: {MOTIVO_LABEL[motivo]} · {fmtHora(reg.salida)} → {fmtHora(reg.regreso)}
+                      </div>
+                    )}
+                  </div>
                 </div>
 
-                <div className={ui.exitButtons}>
-                  {MOTIVOS.map((m) => (
-                    <button
-                      key={m.key}
-                      className={ui.btn + " " + m.className}
-                      disabled={afuera}
-                      onClick={() => salir(a, m.key)}
-                      title={"Registrar salida por " + m.label}
-                    >
-                      {m.label}
-                    </button>
-                  ))}
+                <div className={ui.studentActions}>
+                  <div className={ui.actionLabel}>Registrar salida</div>
+                  <div className={ui.exitButtons}>
+                    {MOTIVOS.map((m) => (
+                      <button
+                        key={m.key}
+                        className={ui.btn + " " + m.className}
+                        disabled={afuera}
+                        onClick={() => salir(a, m.key)}
+                      >
+                        {m.label}
+                      </button>
+                    ))}
+                  </div>
                 </div>
 
-                <button className={ui.btn + " " + ui.btnOk} disabled={!afuera} onClick={() => reg && regresar(reg)}>
-                  Regresó
-                </button>
-
-                <button className={ui.btn + " " + ui.btnIcon} onClick={() => eliminar(a)} title="Eliminar alumno">
-                  ✕
-                </button>
-              </div>
+                <div className={ui.studentControls}>
+                  <button className={ui.returnButton} disabled={!afuera} onClick={() => reg && regresar(reg)}>
+                    {afuera ? "✓ Regresó" : "Regresó"}
+                  </button>
+                  <button className={ui.deleteButton} onClick={() => eliminar(a)} title="Eliminar alumno" aria-label={"Eliminar " + a.nombre}>
+                    ×
+                  </button>
+                </div>
+              </article>
             );
           })}
         </div>
       )}
 
-      <div className={ui.addRow}>
-        <input
-          value={nuevo}
-          onChange={(e) => setNuevo(e.target.value)}
-          placeholder="Nombre del alumno"
-          onKeyDown={(e) => e.key === "Enter" && agregar()}
-        />
-        <button className={ui.btn + " " + ui.btnGhost} onClick={agregar}>
-          Agregar
-        </button>
-      </div>
+      <section className={ui.addPanel}>
+        <div>
+          <h2 className={ui.addTitle}>Agregar alumno</h2>
+          <p className={ui.sectionHint}>Añade un alumno al grupo {grupo.nombre}.</p>
+        </div>
+        <div className={ui.addRow}>
+          <input
+            value={nuevo}
+            onChange={(e) => setNuevo(e.target.value)}
+            placeholder="Nombre completo del alumno"
+            onKeyDown={(e) => e.key === "Enter" && agregar()}
+          />
+          <button className={ui.btn + " " + ui.btnPrimary} onClick={agregar}>
+            Agregar alumno
+          </button>
+        </div>
+      </section>
     </div>
   );
 }
