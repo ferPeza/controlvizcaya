@@ -1,6 +1,9 @@
+export type RolProfesor = "profesor" | "monitor";
+
 export interface Profesor {
   id: string;
   nombre: string;
+  rol: RolProfesor;
 }
 
 export interface Grupo {
