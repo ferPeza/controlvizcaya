@@ -23,12 +23,12 @@ export default function Monitor({profesor:_profesor}:MonitorProps){
  }
  useEffect(()=>{
  cargar();
- const t=setInterval(()=>setNow(Date.now()),15000);
- const r=setInterval(cargar,30000);
+ const t=setInterval(()=>setNow(Date.now()),1000);
+ const r=setInterval(cargar,2000);
  const channel=supabase.channel("monitor-salidas")
-  .on("postgres_changes",{event:"INSERT",schema:"public",table:"bano_registros"},()=>{cargar()})
-  .on("postgres_changes",{event:"UPDATE",schema:"public",table:"bano_registros"},()=>{cargar()})
-  .on("postgres_changes",{event:"DELETE",schema:"public",table:"bano_registros"},()=>{cargar()})
+  .on("postgres_changes",{event:"INSERT",schema:"public",table:"bano_registros"},()=>{void cargar()})
+  .on("postgres_changes",{event:"UPDATE",schema:"public",table:"bano_registros"},()=>{void cargar()})
+  .on("postgres_changes",{event:"DELETE",schema:"public",table:"bano_registros"},()=>{void cargar()})
   .on("postgres_changes",{event:"*",schema:"public",table:"bano_alumnos"},()=>{cargar()})
   .on("postgres_changes",{event:"*",schema:"public",table:"bano_grupos"},()=>{cargar()})
   .subscribe((status)=>{setRealtime(status==="SUBSCRIBED");});
