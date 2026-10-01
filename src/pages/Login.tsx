@@ -26,6 +26,7 @@ export default function Login({onLogin}:LoginProps){
   </section>
   <main className={styles.formSide}>
    <div className={styles.formWrap}>
+    <img className={styles.mobileEmblem} src="/vizcaya-ave.svg" alt="Emblema Vizcaya" />
     <div className={styles.formHeader}>
      <span className={styles.formEyebrow}>BIENVENIDO</span>
      <h2>Iniciar sesión</h2>
