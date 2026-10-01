@@ -211,4 +211,6 @@ export default function Alumnos({ grupo }: AlumnosProps) {
         </div>
       )}
 
-    </div>\n  );\n}\n
+    </div>
+  );
+}
