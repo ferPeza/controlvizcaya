@@ -23,13 +23,13 @@ export default function Shell({profesorNombre,rol,active,nav=[],crumb,onNavigate
  const salir=()=>{cerrarMenu();onLogout?.()};
  return <>
   <aside className={styles.sidebar}>
-   <div className={styles.brandBlock}><div className={styles.logo}>CS</div><div><strong>Control de salidas</strong><span>Panel escolar</span></div></div>
+   <div className={styles.brandBlock}><div className={styles.logo}>CS</div><div><strong>Control Salidas</strong></div></div>
    <div className={styles.sideLabel}>NAVEGACIÓN</div>
    <nav className={styles.nav}>{nav.map(item=><button key={item.key} className={active===item.key?styles.navActive:styles.navItem} onClick={()=>onNavigate?.(item.key)}><span className={styles.navIcon}>{item.icon}</span>{item.label}</button>)}</nav>
   </aside>
   <div className={styles.app}>
    <header className={styles.topbar}>
-    <div className={styles.mobileBrand}><div className={styles.logo}>CS</div><strong>Control de salidas</strong></div>
+    <div className={styles.mobileBrand}><div className={styles.logo}>CS</div><strong>Control Salidas</strong></div>
     <div className={styles.accountMenu}>
      <button className={styles.accountTrigger} onClick={()=>setAccountOpen(v=>!v)} aria-expanded={accountOpen} aria-haspopup="menu">
       <div className={styles.avatar}>{inicial}</div>
