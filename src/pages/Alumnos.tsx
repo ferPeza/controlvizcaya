@@ -32,6 +32,7 @@ export default function Alumnos({ grupo }: AlumnosProps) {
   const [alumnos, setAlumnos] = useState<Alumno[] | null>(null);
   const [ultimos, setUltimos] = useState<Record<string, Registro>>({});
   const [nuevo, setNuevo] = useState("");
+  const [grupoBloqueado, setGrupoBloqueado] = useState(false);
 
   async function cargar() {
     const { data: alData } = await supabase
@@ -56,8 +57,10 @@ export default function Alumnos({ grupo }: AlumnosProps) {
         if (!map[r.alumno_id]) map[r.alumno_id] = r;
       });
       setUltimos(map);
+      setGrupoBloqueado(Object.values(map).some((r) => !r.regreso));
     } else {
       setUltimos({});
+      setGrupoBloqueado(false);
     }
   }
 
@@ -97,6 +100,12 @@ export default function Alumnos({ grupo }: AlumnosProps) {
           <span className={ui.eyebrow}>GRUPO</span>
           <h1 className={ui.pageTitle}>{grupo.nombre}</h1>
           <p className={ui.pageSubtitle}>Registra y consulta las salidas de tus alumnos.</p>
+          {grupoBloqueado && (
+            <div className={ui.groupBathroomLock} role="status">
+              <strong>Baño bloqueado</strong>
+              <span>Hay un alumno de este grupo fuera del aula. El permiso de baño se habilitará cuando regrese.</span>
+            </div>
+          )}
         </div>
         {alumnos && <div className={ui.countBadge}>{alumnos.length} alumnos</div>}
       </section>
