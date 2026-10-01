@@ -17,16 +17,20 @@ interface ShellProps {
 }
 export default function Shell({profesorNombre,rol,active,nav=[],crumb,onNavigate,onGear,onLogout,children}:ShellProps){
  const [accountOpen,setAccountOpen]=useState(false);
+ const [mobileNavOpen,setMobileNavOpen]=useState(false);
  const nombreProfesor=(profesorNombre||"Profesor").trim();
  const inicial=nombreProfesor.slice(0,1).toUpperCase();
  const cerrarMenu=()=>setAccountOpen(false);
+ const navegar=(key:string)=>{setMobileNavOpen(false);onNavigate?.(key)};
  const perfil=()=>{cerrarMenu();onGear?.()};
  const salir=()=>{cerrarMenu();onLogout?.()};
  return <>
-  <aside className={styles.sidebar}>
+  <button className={styles.mobileMenuButton} onClick={()=>setMobileNavOpen(v=>!v)} aria-label="Abrir menú">☰</button>
+  {mobileNavOpen&&<button className={styles.mobileOverlay} aria-label="Cerrar menú" onClick={()=>setMobileNavOpen(false)} />}
+  <aside className={mobileNavOpen?styles.sidebar+" "+styles.sidebarOpen:styles.sidebar}>
    <div className={styles.brandBlock}><div className={styles.logo}>CS</div><div><strong>Control Salidas</strong></div></div>
    <div className={styles.sideLabel}>NAVEGACIÓN</div>
-   <nav className={styles.nav}>{nav.map(item=><button key={item.key} className={active===item.key?styles.navActive:styles.navItem} onClick={()=>onNavigate?.(item.key)}><span className={styles.navIcon}>{item.icon}</span>{item.label}</button>)}</nav>
+   <nav className={styles.nav}>{nav.map(item=><button key={item.key} className={active===item.key?styles.navActive:styles.navItem} onClick={()=>navegar(item.key)}><span className={styles.navIcon}>{item.icon}</span>{item.label}</button>)}</nav>
   </aside>
   <div className={styles.app}>
    <header className={styles.topbar}>
@@ -34,7 +38,7 @@ export default function Shell({profesorNombre,rol,active,nav=[],crumb,onNavigate
     <div className={styles.accountMenu}>
      <button className={styles.accountTrigger} onClick={()=>setAccountOpen(v=>!v)} aria-expanded={accountOpen} aria-haspopup="menu">
       <div className={styles.avatar}>{inicial}</div>
-      <div className={styles.accountText}><strong>{nombreProfesor}</strong><span>{rol==="monitor"?"Monitor":"Profesor"}</span></div>
+      <div className={styles.accountText}><strong>{nombreProfesor}</strong><span>{rol==="administrador"?"Administrador":rol==="monitor"?"Monitor":"Profesor"}</span></div>
       <span className={styles.accountChevron}>⌄</span>
      </button>
      {accountOpen&&<div className={styles.accountDropdown} role="menu">
