@@ -165,3 +165,6 @@
 
 .monitorMetaGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:4px 0 12px}.monitorMetaGrid>div{background:#f6f9fc;border:1px solid #e5edf5;border-radius:8px;padding:8px}.monitorMetaGrid small{display:block;color:#8499b2;font-size:9px;font-weight:700;margin-bottom:3px}.monitorMetaGrid strong{display:block;color:#244466;font-size:11px}.monitorCard{transition:border-color .4s,box-shadow .4s,background-color .4s}.monitorCard[style*="#ef4444"]{box-shadow:0 6px 22px rgba(239,68,68,.12)}.monitorCard[style*="#f5a524"]{box-shadow:0 6px 22px rgba(245,165,36,.1)}
 @media(max-width:500px){.monitorMetaGrid{grid-template-columns:1fr 1fr}.monitorMetaGrid>div:last-child{grid-column:1/-1}}
+
+.groupBathroomLock{margin-top:14px;display:flex;align-items:center;gap:10px;padding:11px 14px;border:1px solid #f4c36a;background:#fff8e8;border-radius:10px;color:#7a4b00;font-size:11px}.groupBathroomLock strong{font-size:11px;white-space:nowrap}.groupBathroomLock span{color:#956d2d}
+@media(max-width:560px){.groupBathroomLock{align-items:flex-start;flex-direction:column;gap:3px}}
