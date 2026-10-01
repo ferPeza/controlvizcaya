@@ -5,7 +5,7 @@ import type { Profesor } from "../types";
 
 interface MonitorProps { profesor: Profesor; }
 type Motivo = "salio" | "tutor" | "psicologa" | "coordinacion";
-const LABEL: Record<Motivo,string> = { salio:"Salida por baño", tutor:"Tutor", psicologa:"Psicóloga", coordinacion:"Coordinación" };
+const LABEL: Record<Motivo,string> = { salio:"Baño", tutor:"Tutor", psicologa:"Psicóloga", coordinacion:"Coordinación" };
 interface Salida { id:string; alumno_id:string; nombre:string; grupo_id:string; grupo:string; salida:string; motivo:Motivo; permisosHoy:number; }
 
 function minutosDesde(iso:string,now:number){return Math.max(0,(now-new Date(iso).getTime())/60000);}
