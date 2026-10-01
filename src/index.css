@@ -1,12 +1,12 @@
 :root {
-  color-scheme: light dark;
-  --bg: #eef1f5;
+  color-scheme: light;
+  --bg: #f8fafc;
   --surface: #ffffff;
   --surface-2: #f5f7fa;
   --ink: #16202b;
   --muted: #5b6b7c;
   --border: #dde3ea;
-  --accent: #2e5eaa;
+  --accent: #2563eb;
   --accent-ink: #ffffff;
   --out: #c9642b;
   --out-bg: #fbe9dd;
@@ -17,7 +17,7 @@
   --ok-bg: #e3f3ea;
   --danger: #b53f2f;
   --shadow: 0 1px 2px rgba(22, 32, 43, 0.06), 0 8px 24px -12px rgba(22, 32, 43, 0.18);
-  --radius: 14px;
+  --radius: 10px;
   --font-display: "Fraunces", "Iowan Old Style", serif;
   --font-body: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
