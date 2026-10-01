@@ -15,7 +15,7 @@ export default function Grupos({ profesor, onSelect }: GruposProps) {
  async function quitar(g:Grupo){if(!confirm(`¿Quitar undefined de tus grupos? (el grupo y sus alumnos no se borran)`))return;await supabase.from("bano_profesor_grupos").delete().eq("profesor_id",profesor.id).eq("grupo_id",g.id);cargar()}
  return <div className={ui.dashboard}>
    <div className={ui.pageIntro}>
-    <div><span className={ui.eyebrow}>CONTROL ESCOLAR</span><h1 className={ui.pageTitle}>Mis grupos</h1><p className={ui.pageSubtitle}>Administra y accede a los grupos asignados a tu cuenta.</p></div>
+    <div><span className={ui.eyebrow}>CONTROL ESCOLAR</span><h1 className={ui.pageTitle}>Mis grupos</h1></div>
     {grupos&&<span className={ui.countBadge}>{grupos.length} grupos</span>}
    </div>
    <div className={ui.groupDashboardGrid}>
@@ -25,10 +25,6 @@ export default function Grupos({ profesor, onSelect }: GruposProps) {
        <span className={ui.groupTileRemove} onClick={(e)=>{e.stopPropagation();quitar(g)}} title="Quitar de mis grupos">×</span>
       </button>
     )}
-   </div>
-   <div className={ui.addPanel}>
-    <div><h3 className={ui.addTitle}>Agregar grupo</h3><p className={ui.sectionHint}>Escribe el nombre del grupo para asignarlo a tu cuenta.</p></div>
-    <div className={ui.addRow}><input value={nuevo} onChange={e=>setNuevo(e.target.value)} placeholder="Ej. 3A" onKeyDown={e=>e.key==="Enter"&&agregar()}/><button className={`${ui.btn} ${ui.btnPrimary}`} onClick={agregar} disabled={busy}>{busy?"Agregando…":"Agregar grupo"}</button></div>
    </div>
   </div>;
 }
