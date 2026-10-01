@@ -17,7 +17,8 @@ interface ShellProps {
 }
 export default function Shell({profesorNombre,rol,active,nav=[],crumb,onNavigate,onGear,onLogout,children}:ShellProps){
  const [accountOpen,setAccountOpen]=useState(false);
- const inicial=(profesorNombre||"U").slice(0,1).toUpperCase();
+ const nombreProfesor=(profesorNombre||"Profesor").trim();
+ const inicial=nombreProfesor.slice(0,1).toUpperCase();
  const cerrarMenu=()=>setAccountOpen(false);
  const perfil=()=>{cerrarMenu();onGear?.()};
  const salir=()=>{cerrarMenu();onLogout?.()};
@@ -33,7 +34,7 @@ export default function Shell({profesorNombre,rol,active,nav=[],crumb,onNavigate
     <div className={styles.accountMenu}>
      <button className={styles.accountTrigger} onClick={()=>setAccountOpen(v=>!v)} aria-expanded={accountOpen} aria-haspopup="menu">
       <div className={styles.avatar}>{inicial}</div>
-      <div className={styles.accountText}><strong>{profesorNombre||"Usuario"}</strong><span>{rol==="monitor"?"Monitor":"Profesor"}</span></div>
+      <div className={styles.accountText}><strong>{nombreProfesor}</strong><span>{rol==="monitor"?"Monitor":"Profesor"}</span></div>
       <span className={styles.accountChevron}>⌄</span>
      </button>
      {accountOpen&&<div className={styles.accountDropdown} role="menu">
