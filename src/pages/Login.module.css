@@ -10,3 +10,53 @@
 .helper{margin:0 0 10px;color:#64748b;font-size:10.5px;line-height:1.55;text-align:center}.errorMsg{margin:13px 0 0;padding:9px 11px;border-radius:8px;background:#fef2f2;color:#dc2626;font-size:11px;line-height:1.4}
 @media(max-width:760px){.loginPage{grid-template-columns:1fr;min-height:100dvh}.welcome{display:none}.formSide{min-height:100dvh;padding:28px 20px}.formWrap{max-width:400px}.mobileBrand{display:flex;align-items:center;gap:9px;margin-bottom:58px;color:#0f172a;font-size:14px}.mobileLogo{width:34px;height:34px;border-radius:9px;display:grid;place-items:center;background:#2563eb;color:#fff;font-size:10px;font-weight:900}.formHeader h2{font-size:28px}}
 @media(min-width:761px){.formSide{box-shadow:-20px 0 50px rgba(15,23,42,.05)}}
+
+.mobileEmblem{display:none}
+
+@media(max-width:760px){
+  .loginPage{background:#fbf7f9}
+  .formSide{
+    position:relative;
+    overflow:hidden;
+    min-height:100dvh;
+    padding:28px 20px 34px;
+    background:
+      radial-gradient(circle at 100% 0,rgba(138,31,69,.10),transparent 30%),
+      radial-gradient(circle at 0 100%,rgba(177,58,91,.07),transparent 28%),
+      #fff;
+  }
+  .formSide:before{
+    content:"";
+    position:absolute;
+    width:180px;height:180px;
+    right:-115px;top:-105px;
+    border-radius:50%;
+    border:24px solid rgba(138,31,69,.08);
+    pointer-events:none;
+  }
+  .formWrap{position:relative;z-index:1;width:min(390px,100%);padding:0 2px}
+  .mobileEmblem{
+    display:block;
+    width:min(210px,62vw);
+    height:auto;
+    margin:2px auto 18px;
+    filter:drop-shadow(0 12px 18px rgba(93,16,45,.16));
+  }
+  .formHeader{text-align:center;margin-bottom:26px}
+  .formEyebrow{color:#8a1f45}
+  .formHeader h2{color:#4d1028;font-size:28px;margin:7px 0 0}
+  .field label{color:#5d2339}
+  .field input{
+    border-color:#ead5dd;
+    background:#fff;
+  }
+  .field input:focus{
+    border-color:#8a1f45;
+    box-shadow:0 0 0 3px rgba(138,31,69,.11);
+  }
+  .primaryButton{
+    background:#8a1f45;
+    box-shadow:0 9px 22px rgba(138,31,69,.24);
+  }
+  .primaryButton:hover:not(:disabled){background:#741937}
+}
