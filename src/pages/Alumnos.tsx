@@ -31,7 +31,6 @@ function fmtHora(iso: string) {
 export default function Alumnos({ grupo }: AlumnosProps) {
   const [alumnos, setAlumnos] = useState<Alumno[] | null>(null);
   const [ultimos, setUltimos] = useState<Record<string, Registro>>({});
-  const [nuevo, setNuevo] = useState("");
   const [grupoBloqueado, setGrupoBloqueado] = useState(false);
   const bloquearBano = grupoBloqueado;
 
@@ -96,20 +95,6 @@ export default function Alumnos({ grupo }: AlumnosProps) {
       void supabase.removeChannel(channel);
     };
   }, [grupo.id]);
-
-  async function agregar() {
-    const nombre = nuevo.trim();
-    if (!nombre) return;
-    await supabase.from("bano_alumnos").insert({ nombre, grupo_id: grupo.id });
-    setNuevo("");
-    cargar();
-  }
-
-  async function eliminar(a: Alumno) {
-    if (!confirm("¿Eliminar a " + a.nombre + "? Se borrará también su historial de baño.")) return;
-    await supabase.from("bano_alumnos").delete().eq("id", a.id);
-    cargar();
-  }
 
   async function salir(a: Alumno, motivo: MotivoSalida) {
     if (motivo === "salio" && grupoBloqueado) {
@@ -219,9 +204,6 @@ export default function Alumnos({ grupo }: AlumnosProps) {
                   <button className={ui.returnButton} disabled={!afuera} onClick={() => reg && regresar(reg)}>
                     {afuera ? "✓ Regresó" : "Regresó"}
                   </button>
-                  <button className={ui.deleteButton} onClick={() => eliminar(a)} title="Eliminar alumno" aria-label={"Eliminar " + a.nombre}>
-                    ×
-                  </button>
                 </div>
               </article>
             );
@@ -229,23 +211,4 @@ export default function Alumnos({ grupo }: AlumnosProps) {
         </div>
       )}
 
-      <section className={ui.addPanel}>
-        <div>
-          <h2 className={ui.addTitle}>Agregar alumno</h2>
-          <p className={ui.sectionHint}>Añade un alumno al grupo {grupo.nombre}.</p>
-        </div>
-        <div className={ui.addRow}>
-          <input
-            value={nuevo}
-            onChange={(e) => setNuevo(e.target.value)}
-            placeholder="Nombre completo del alumno"
-            onKeyDown={(e) => e.key === "Enter" && agregar()}
-          />
-          <button className={ui.btn + " " + ui.btnPrimary} onClick={agregar}>
-            Agregar alumno
-          </button>
-        </div>
-      </section>
-    </div>
-  );
-}
+    </div>\n  );\n}\n
