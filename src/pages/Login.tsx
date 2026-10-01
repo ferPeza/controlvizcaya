@@ -18,9 +18,7 @@ export default function Login({onLogin}:LoginProps){
  }
  return <div className={styles.loginPage}>
   <section className={styles.welcome}>
-   <div className={styles.welcomeOrb}>CS</div>
    <div className={styles.welcomeContent}>
-    <span className={styles.eyebrow}>CONTROL ESCOLAR</span>
     <h1>Control Salidas</h1>
     <p>Registra y monitorea de forma sencilla las salidas de los alumnos.</p>
    </div>
@@ -28,7 +26,6 @@ export default function Login({onLogin}:LoginProps){
   </section>
   <main className={styles.formSide}>
    <div className={styles.formWrap}>
-    <div className={styles.mobileBrand}><span className={styles.mobileLogo}>CS</span><strong>Control Salidas</strong></div>
     <div className={styles.formHeader}>
      <span className={styles.formEyebrow}>BIENVENIDO</span>
      <h2>Iniciar sesión</h2>
