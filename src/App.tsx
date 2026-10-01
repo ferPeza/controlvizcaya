@@ -12,6 +12,7 @@ import Monitor from "./pages/Monitor";
 import MonitorStats from "./pages/MonitorStats";
 import Profesores from "./pages/Profesores";
 import type { Grupo,Profesor } from "./types";
+import { supabase } from "./lib/supabase";
 import ui from "./components/ui.module.css";
 
 type Vista="login"|"grupos"|"alumnos"|"gestionAlumnos"|"horarios"|"stats"|"perfil"|"monitor"|"profesores";
@@ -19,7 +20,7 @@ const STORAGE_KEY="bano_session";
 
 export default function App(){
  const[profesor,setProfesor]=useState<Profesor|null>(null),[grupo,setGrupo]=useState<Grupo|null>(null),[vista,setVista]=useState<Vista>("login");
- useEffect(()=>{try{const saved=JSON.parse(localStorage.getItem(STORAGE_KEY)||"null");if(saved?.id&&saved?.usuario){setProfesor({...saved,nombre:saved.nombre??saved.usuario,rol:saved.rol??"profesor"});setVista(saved.rol==="monitor"||saved.rol==="administrador"?"monitor":"grupos")}}catch{}},[]);
+ useEffect(()=>{(async()=>{try{const saved=JSON.parse(localStorage.getItem(STORAGE_KEY)||"null");if(!saved?.id)return;const{data}=await supabase.from("bano_profesores").select("id,nombre,usuario,rol").eq("id",saved.id).maybeSingle();const p:Profesor=data?{id:data.id,nombre:data.nombre??data.usuario,usuario:data.usuario,rol:data.rol??"profesor"}:{...saved,nombre:saved.nombre??saved.usuario,rol:saved.rol??"profesor"};setProfesor(p);localStorage.setItem(STORAGE_KEY,JSON.stringify(p));setVista(p.rol==="monitor"||p.rol==="administrador"?"monitor":"grupos")}catch{}})()},[]);
  function login(p:Profesor){setProfesor(p);localStorage.setItem(STORAGE_KEY,JSON.stringify(p));setVista(p.rol==="monitor"||p.rol==="administrador"?"monitor":"grupos")}
  function logout(){setProfesor(null);setGrupo(null);localStorage.removeItem(STORAGE_KEY);setVista("login")}
  function perfilGuardado(p:Profesor){setProfesor(p);localStorage.setItem(STORAGE_KEY,JSON.stringify(p));setVista(p.rol==="monitor"||p.rol==="administrador"?"monitor":"grupos")}
