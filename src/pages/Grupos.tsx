@@ -15,7 +15,7 @@ export default function Grupos({ profesor, onSelect }: GruposProps) {
  async function quitar(g:Grupo){if(!confirm(`¿Quitar undefined de tus grupos? (el grupo y sus alumnos no se borran)`))return;await supabase.from("bano_profesor_grupos").delete().eq("profesor_id",profesor.id).eq("grupo_id",g.id);cargar()}
  return <div className={ui.dashboard}>
    <div className={ui.pageIntro}>
-    <div><span className={ui.eyebrow}>CONTROL ESCOLAR</span><h1 className={ui.pageTitle}>Mis grupos</h1></div>
+    <div><h1 className={ui.pageTitle}>Mis grupos</h1></div>
     {grupos&&<span className={ui.countBadge}>{grupos.length} grupos</span>}
    </div>
    <div className={ui.groupDashboardGrid}>
