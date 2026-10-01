@@ -20,7 +20,7 @@ export default function App(){
  function logout(){setProfesor(null);setGrupo(null);localStorage.removeItem(STORAGE_KEY);setVista("login")}
  function perfilGuardado(p:Profesor){setProfesor(p);localStorage.setItem(STORAGE_KEY,JSON.stringify(p));setVista(p.rol==="monitor"?"monitor":"grupos")}
  function elegirGrupo(g:Grupo){setGrupo(g);setVista("alumnos")}
- if(!profesor||vista==="login")return <Shell><Login onLogin={login}/></Shell>;
+ if(!profesor||vista==="login")return <Login onLogin={login}/>;
  const crumb=vista==="alumnos"&&grupo?<><button className={ui.crumbButton} onClick={()=>setVista("grupos")}>Mis grupos</button><span>›</span><span>{grupo.nombre}</span></>:vista==="stats"&&grupo?<><button className={ui.crumbButton} onClick={()=>setVista("alumnos")}>Grupo {grupo.nombre}</button><span>›</span><span>Estadísticas</span></>:null;
  const nav=profesor.rol==="monitor"
    ? [{key:"monitor" as Vista,label:"Monitor",icon:"▣"}]
