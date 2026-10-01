@@ -18,7 +18,7 @@ const STORAGE_KEY="bano_session";
 
 export default function App(){
  const[profesor,setProfesor]=useState<Profesor|null>(null),[grupo,setGrupo]=useState<Grupo|null>(null),[vista,setVista]=useState<Vista>("login");
- useEffect(()=>{try{const saved=JSON.parse(localStorage.getItem(STORAGE_KEY)||"null");if(saved?.id&&saved?.nombre){setProfesor({...saved,rol:saved.rol??"profesor"});setVista(saved.rol==="monitor"?"monitor":"grupos")}}catch{}},[]);
+ useEffect(()=>{try{const saved=JSON.parse(localStorage.getItem(STORAGE_KEY)||"null");if(saved?.id&&saved?.usuario){setProfesor({...saved,nombre:saved.nombre??saved.usuario,rol:saved.rol??"profesor"});setVista(saved.rol==="monitor"?"monitor":"grupos")}}catch{}},[]);
  function login(p:Profesor){setProfesor(p);localStorage.setItem(STORAGE_KEY,JSON.stringify(p));setVista(p.rol==="monitor"?"monitor":"grupos")}
  function logout(){setProfesor(null);setGrupo(null);localStorage.removeItem(STORAGE_KEY);setVista("login")}
  function perfilGuardado(p:Profesor){setProfesor(p);localStorage.setItem(STORAGE_KEY,JSON.stringify(p));setVista(p.rol==="monitor"?"monitor":"grupos")}
