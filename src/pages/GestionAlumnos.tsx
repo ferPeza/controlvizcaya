@@ -71,7 +71,6 @@ export default function GestionAlumnos({ profesor }: GestionAlumnosProps) {
         <div>
           <span className={ui.eyebrow}>CONTROL ESCOLAR</span>
           <h1 className={ui.pageTitle}>Alumnos</h1>
-          <p className={ui.pageSubtitle}>Administra los alumnos de tus grupos.</p>
         </div>
         <div className={ui.countBadge}>{alumnos.length} alumnos</div>
       </section>
@@ -80,7 +79,6 @@ export default function GestionAlumnos({ profesor }: GestionAlumnosProps) {
         <div className={ui.pageIntro}>
           <div>
             <h2 className={ui.addTitle}>Selecciona un grupo</h2>
-            <p className={ui.sectionHint}>Consulta, agrega o elimina alumnos desde este apartado.</p>
           </div>
         </div>
         <div className={ui.groupDashboardGrid}>
