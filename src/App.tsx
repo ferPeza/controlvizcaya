@@ -9,6 +9,7 @@ import GestionAlumnos from "./pages/GestionAlumnos";
 import Horarios from "./pages/Horarios";
 import Stats from "./pages/Stats";
 import Monitor from "./pages/Monitor";
+import MonitorStats from "./pages/MonitorStats";
 import type { Grupo,Profesor } from "./types";
 import ui from "./components/ui.module.css";
 
@@ -25,7 +26,7 @@ export default function App(){
  if(!profesor||vista==="login")return <Login onLogin={login}/>;
  const crumb=vista==="alumnos"&&grupo?<><button className={ui.crumbButton} onClick={()=>setVista("grupos")}>Mis grupos</button><span>›</span><span>{grupo.nombre}</span></>:vista==="stats"&&grupo?<><button className={ui.crumbButton} onClick={()=>setVista("alumnos")}>Grupo {grupo.nombre}</button><span>›</span><span>Estadísticas</span></>:null;
  const nav=profesor.rol==="monitor"
-   ? [{key:"monitor" as Vista,label:"Monitor",icon:"▣"}]
+   ? [{key:"monitor" as Vista,label:"Monitor",icon:"▣"},{key:"stats" as Vista,label:"Estadísticas",icon:"▥"}]
    : [
       {key:"grupos" as Vista,label:"Mis grupos",icon:"▦"},
       {key:"gestionAlumnos" as Vista,label:"Alumnos",icon:"♙"},
@@ -33,7 +34,7 @@ export default function App(){
       {key:"stats" as Vista,label:"Estadísticas",icon:"▥"}
      ];
  return <Shell profesorNombre={profesor.nombre} rol={profesor.rol} active={vista} nav={nav} crumb={crumb} onNavigate={(v)=>setVista(v as Vista)} onGear={()=>setVista("perfil")} onLogout={logout}>
-   {profesor.rol==="monitor" && vista==="monitor" && <Monitor profesor={profesor}/>}
+   {profesor.rol==="monitor" && vista==="monitor" && <Monitor profesor={profesor}/>}\n   {profesor.rol==="monitor" && vista==="stats" && <MonitorStats/>}
    {vista==="perfil"&&<Perfil profesor={profesor} onSaved={perfilGuardado} onLogout={logout}/>}
    {profesor.rol==="profesor"&&vista==="grupos"&&<Grupos profesor={profesor} onSelect={elegirGrupo}/>}
    {profesor.rol==="profesor"&&vista==="gestionAlumnos"&&<GestionAlumnos profesor={profesor}/>}
