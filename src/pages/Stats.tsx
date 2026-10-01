@@ -130,7 +130,6 @@ export default function Stats({ profesor }: StatsProps) {
     <div className={ui.dashboard}>
       <section className={ui.pageIntro}>
         <div>
-          <span className={ui.eyebrow}>CONTROL ESCOLAR</span>
           <h1 className={ui.pageTitle}>Estadísticas</h1>
         </div>
       </section>
