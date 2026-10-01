@@ -11,6 +11,7 @@ export default function Profesores({administrador}:Props){
  const [usuario,setUsuario]=useState("");
  const [nombre,setNombre]=useState("");
  const [pin,setPin]=useState("");
+ const [rol,setRol]=useState<Profesor["rol"]>("profesor");
  const [msg,setMsg]=useState("");
  const [busy,setBusy]=useState(false);
  const [grupoProfesor,setGrupoProfesor]=useState<Profesor|null>(null);
@@ -34,9 +35,9 @@ export default function Profesores({administrador}:Props){
    setBusy(true);setMsg("");
    const {data:dup}=await supabase.from("bano_profesores").select("id").ilike("usuario",u).limit(1);
    if(dup?.length){setBusy(false);setMsg("Ese usuario ya existe.");return}
-   const {error}=await supabase.from("bano_profesores").insert({usuario:u,nombre:n,pin:p,rol:"profesor"});
+   const {error}=await supabase.from("bano_profesores").insert({usuario:u,nombre:n,pin:p,rol});
    if(error){setBusy(false);setMsg(error.message);return}
-   setUsuario("");setNombre("");setPin("");setBusy(false);setMsg("Profesor dado de alta correctamente.");void cargar();
+   setUsuario("");setNombre("");setPin("");setRol("profesor");setBusy(false);setMsg("Usuario dado de alta correctamente.");void cargar();
  }
 
  async function abrirGrupos(profesor:Profesor){
@@ -84,19 +85,19 @@ export default function Profesores({administrador}:Props){
    </section>
 
    <section className={ui.card}>
-    <h2 className={ui.cardTitle}>Nuevo profesor</h2>
-    <div style={{display:"grid",gridTemplateColumns:"repeat(3,minmax(0,1fr))",gap:12,marginTop:16}}>
+    <h2 className={ui.cardTitle}>Dar de alta usuario</h2>
+    <div style={{display:"grid",gridTemplateColumns:"repeat(4,minmax(0,1fr))",gap:12,marginTop:16}}>
       <div className={ui.field}><label>Usuario</label><input value={usuario} onChange={e=>setUsuario(e.target.value)} placeholder="Ej. jlopez"/></div>
       <div className={ui.field}><label>Nombre completo</label><input value={nombre} onChange={e=>setNombre(e.target.value)} placeholder="Ej. Juan López Pérez"/></div>
-      <div className={ui.field}><label>PIN</label><input value={pin} onChange={e=>setPin(e.target.value.replace(/\D/g,"").slice(0,4))} placeholder="4 dígitos" inputMode="numeric" maxLength={4}/></div>
+      <div className={ui.field}><label>PIN</label><input value={pin} onChange={e=>setPin(e.target.value.replace(/\D/g,"").slice(0,4))} placeholder="4 dígitos" inputMode="numeric" maxLength={4}/></div><div className={ui.field}><label>Rol</label><select value={rol} onChange={e=>setRol(e.target.value as Profesor["rol"])}><option value="profesor">Profesor</option><option value="monitor">Monitor</option><option value="administrador">Administrador</option></select></div>
     </div>
-    <button className={ui.btn+" "+ui.btnPrimary} onClick={agregar} disabled={busy}>{busy?"Guardando…":"Dar de alta profesor"}</button>
+    <button className={ui.btn+" "+ui.btnPrimary} onClick={agregar} disabled={busy}>{busy?"Guardando…":"Dar de alta usuario"}</button>
     {msg&&<p className={ui.errorMsg}>{msg}</p>}
    </section>
 
    <section className={ui.card}>
     <div className={ui.sectionHeader}>
-      <div><h2 className={ui.cardTitle}>Profesores registrados</h2><p className={ui.sectionHint}>Administra las cuentas y los grupos asignados.</p></div>
+      <div><h2 className={ui.cardTitle}>Usuarios registrados</h2><p className={ui.sectionHint}>Administra las cuentas, roles y grupos asignados.</p></div>
       <span className={ui.countBadge}>{lista.length} cuentas</span>
     </div>
     <div className={ui.tableWrap}>
