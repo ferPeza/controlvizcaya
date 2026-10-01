@@ -20,7 +20,6 @@ export default function Horarios() {
         <div>
           <span className={ui.eyebrow}>CONTROL ESCOLAR</span>
           <h1 className={ui.pageTitle}>Horarios</h1>
-          <p className={ui.pageSubtitle}>Periodos de clase y receso de la jornada escolar.</p>
         </div>
       </section>
 
