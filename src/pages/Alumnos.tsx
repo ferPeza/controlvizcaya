@@ -11,14 +11,14 @@ interface AlumnosProps {
 type MotivoSalida = "salio" | "tutor" | "psicologa" | "coordinacion";
 
 const MOTIVOS: Array<{ key: MotivoSalida; label: string; className: string; short: string }> = [
-  { key: "salio", label: "Salió", className: ui.btnOut, short: "Salió" },
+  { key: "salio", label: "Salida por baño", className: ui.btnOut, short: "Salida por baño" },
   { key: "tutor", label: "Tutor", className: ui.btnTutor, short: "Tutor" },
   { key: "psicologa", label: "Psicóloga", className: ui.btnPsicologa, short: "Psicóloga" },
   { key: "coordinacion", label: "Coordinación", className: ui.btnCoordinacion, short: "Coordinación" },
 ];
 
 const MOTIVO_LABEL: Record<MotivoSalida, string> = {
-  salio: "Salió",
+  salio: "Salida por baño",
   tutor: "Tutor",
   psicologa: "Psicóloga",
   coordinacion: "Coordinación",
