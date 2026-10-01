@@ -69,7 +69,6 @@ export default function GestionAlumnos({ profesor }: GestionAlumnosProps) {
     <div className={ui.dashboard}>
       <section className={ui.pageIntro}>
         <div>
-          <span className={ui.eyebrow}>CONTROL ESCOLAR</span>
           <h1 className={ui.pageTitle}>Alumnos</h1>
         </div>
         <div className={ui.countBadge}>{alumnos.length} alumnos</div>
