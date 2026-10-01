@@ -33,6 +33,7 @@ export default function Alumnos({ grupo }: AlumnosProps) {
   const [ultimos, setUltimos] = useState<Record<string, Registro>>({});
   const [nuevo, setNuevo] = useState("");
   const [grupoBloqueado, setGrupoBloqueado] = useState(false);
+  const bloquearBano = grupoBloqueado;
 
   async function cargar() {
     const { data: alData } = await supabase
@@ -57,10 +58,12 @@ export default function Alumnos({ grupo }: AlumnosProps) {
         .select("id,alumno_id,salida,regreso,motivo")
         .in("alumno_id", ids)
         .order("salida", { ascending: false }),
+      // Se consulta por los IDs de los alumnos del grupo para que el bloqueo
+      // no dependa de relaciones anidadas de Supabase/RLS.
       supabase
         .from("bano_registros")
-        .select("id,alumno_id,salida,regreso,bano_alumnos!inner(grupo_id)")
-        .eq("bano_alumnos.grupo_id", grupo.id)
+        .select("id,alumno_id")
+        .in("alumno_id", ids)
         .is("regreso", null),
     ]);
 
@@ -70,7 +73,7 @@ export default function Alumnos({ grupo }: AlumnosProps) {
     });
 
     setUltimos(map);
-    setGrupoBloqueado((activosGrupo ?? []).length > 0);
+    setGrupoBloqueado(Array.isArray(activosGrupo) && activosGrupo.length > 0);
   }
 
   async function agregar() {
@@ -171,8 +174,8 @@ export default function Alumnos({ grupo }: AlumnosProps) {
                       <button
                         key={m.key}
                         className={ui.btn + " " + m.className}
-                        disabled={afuera || (m.key === "salio" && grupoBloqueado)}
-                        title={m.key === "salio" && grupoBloqueado ? "Baño bloqueado: hay un alumno de este grupo fuera" : undefined}
+                        disabled={afuera || (m.key === "salio" && bloquearBano)}
+                        title={m.key === "salio" && bloquearBano ? "Baño bloqueado: hay un alumno de este grupo fuera" : undefined}
                         onClick={() => salir(a, m.key)}
                       >
                         {m.label}
