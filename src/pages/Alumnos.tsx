@@ -64,6 +64,7 @@ export default function Alumnos({ grupo }: AlumnosProps) {
         .from("bano_registros")
         .select("id,alumno_id")
         .in("alumno_id", ids)
+        .eq("motivo", "salio")
         .is("regreso", null),
     ]);
 
@@ -120,8 +121,9 @@ export default function Alumnos({ grupo }: AlumnosProps) {
     if (motivo === "salio") {
       const { data: activos } = await supabase
         .from("bano_registros")
-        .select("id,bano_alumnos!inner(grupo_id)")
-        .eq("bano_alumnos.grupo_id", grupo.id)
+        .select("id,alumno_id,motivo")
+        .in("alumno_id", ids)
+        .eq("motivo", "salio")
         .is("regreso", null);
 
       if ((activos ?? []).length > 0) {
