@@ -28,11 +28,39 @@ function fmtHora(iso: string) {
   return new Date(iso).toLocaleTimeString("es-MX", { hour: "2-digit", minute: "2-digit" });
 }
 
+function estaBloqueadoPorHorario() {
+  const ahora = new Date();
+  const minutos = ahora.getHours() * 60 + ahora.getMinutes();
+
+  // Primeros y últimos 5 minutos de cada clase.
+  const periodos = [
+    [7 * 60, 7 * 60 + 50],
+    [7 * 60 + 50, 8 * 60 + 40],
+    [8 * 60 + 40, 9 * 60 + 30],
+    [9 * 60 + 30, 10 * 60 + 20],
+    [10 * 60 + 50, 11 * 60 + 40],
+    [11 * 60 + 40, 12 * 60 + 30],
+    [12 * 60 + 30, 13 * 60 + 20],
+    [13 * 60 + 20, 14 * 60 + 10],
+  ];
+
+  // La hora 5, inmediatamente después del receso, queda bloqueada completa.
+  const inicioHora5 = 10 * 60 + 50;
+  const finHora5 = 11 * 60 + 40;
+  if (minutos >= inicioHora5 && minutos < finHora5) return true;
+
+  return periodos.some(([inicio, fin]) => {
+    return minutos >= inicio && minutos < inicio + 5 || minutos >= fin - 5 && minutos < fin;
+  });
+}
+
 export default function Alumnos({ grupo }: AlumnosProps) {
   const [alumnos, setAlumnos] = useState<Alumno[] | null>(null);
   const [ultimos, setUltimos] = useState<Record<string, Registro>>({});
   const [grupoBloqueado, setGrupoBloqueado] = useState(false);
-  const bloquearBano = grupoBloqueado;
+  const [, setHoraActual] = useState(() => Date.now());
+  const bloquearBanoHorario = estaBloqueadoPorHorario();
+  const bloquearBano = grupoBloqueado || bloquearBanoHorario;
 
   async function cargar() {
     const { data: alData } = await supabase
@@ -77,6 +105,11 @@ export default function Alumnos({ grupo }: AlumnosProps) {
   }
 
   useEffect(() => {
+    const reloj = window.setInterval(() => setHoraActual(Date.now()), 1000);
+    return () => window.clearInterval(reloj);
+  }, []);
+
+  useEffect(() => {
     void cargar();
 
     const channel = supabase
@@ -97,7 +130,7 @@ export default function Alumnos({ grupo }: AlumnosProps) {
   }, [grupo.id]);
 
   async function salir(a: Alumno, motivo: MotivoSalida) {
-    if (motivo === "salio" && grupoBloqueado) {
+    if (motivo === "salio" && (grupoBloqueado || estaBloqueadoPorHorario())) {
       return;
     }
 
@@ -148,6 +181,12 @@ export default function Alumnos({ grupo }: AlumnosProps) {
               <span>Hay un alumno de este grupo fuera del aula. El permiso de baño se habilitará cuando regrese.</span>
             </div>
           )}
+          {bloquearBanoHorario && (
+            <div className={ui.groupBathroomLock} role="status">
+              <strong>Baño bloqueado por horario</strong>
+              <span>Los permisos de baño están bloqueados durante los primeros y últimos 5 minutos de clase. La hora 5 queda bloqueada completa después del receso.</span>
+            </div>
+          )}
         </div>
         {alumnos && <div className={ui.countBadge}>{alumnos.length} alumnos</div>}
       </section>
@@ -191,7 +230,7 @@ export default function Alumnos({ grupo }: AlumnosProps) {
                         key={m.key}
                         className={ui.btn + " " + m.className}
                         disabled={afuera || (m.key === "salio" && bloquearBano)}
-                        title={m.key === "salio" && bloquearBano ? "Baño bloqueado: hay un alumno de este grupo fuera" : undefined}
+                        title={m.key === "salio" && bloquearBanoHorario ? "Baño bloqueado por horario" : m.key === "salio" && grupoBloqueado ? "Baño bloqueado: hay un alumno de este grupo fuera" : undefined}
                         onClick={() => salir(a, m.key)}
                       >
                         {m.label}
