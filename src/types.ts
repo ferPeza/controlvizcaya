@@ -1,4 +1,4 @@
-export type RolProfesor = "profesor" | "monitor";
+export type RolProfesor = "profesor" | "monitor" | "administrador";
 
 export interface Profesor {
   id: string;
