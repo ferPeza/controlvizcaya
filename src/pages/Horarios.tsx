@@ -18,7 +18,6 @@ export default function Horarios() {
     <div className={ui.dashboard}>
       <section className={ui.pageIntro}>
         <div>
-          <span className={ui.eyebrow}>CONTROL ESCOLAR</span>
           <h1 className={ui.pageTitle}>Horarios</h1>
         </div>
       </section>
