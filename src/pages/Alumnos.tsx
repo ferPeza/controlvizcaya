@@ -119,10 +119,19 @@ export default function Alumnos({ grupo }: AlumnosProps) {
     // Comprobación final contra Supabase para evitar que dos clics
     // simultáneos permitan dos permisos de baño en el mismo grupo.
     if (motivo === "salio") {
+      const { data: alumnosGrupo } = await supabase
+        .from("bano_alumnos")
+        .select("id")
+        .eq("grupo_id", grupo.id);
+
+      const idsGrupo = (alumnosGrupo ?? []).map((alumno) => alumno.id);
+
+      if (!idsGrupo.length) return;
+
       const { data: activos } = await supabase
         .from("bano_registros")
         .select("id,alumno_id,motivo")
-        .in("alumno_id", ids)
+        .in("alumno_id", idsGrupo)
         .eq("motivo", "salio")
         .is("regreso", null);
 
