@@ -171,7 +171,8 @@ export default function Alumnos({ grupo }: AlumnosProps) {
                       <button
                         key={m.key}
                         className={ui.btn + " " + m.className}
-                        disabled={afuera}
+                        disabled={afuera || (m.key === "salio" && grupoBloqueado)}
+                        title={m.key === "salio" && grupoBloqueado ? "Baño bloqueado: hay un alumno de este grupo fuera" : undefined}
                         onClick={() => salir(a, m.key)}
                       >
                         {m.label}
