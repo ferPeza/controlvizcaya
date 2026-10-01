@@ -20,7 +20,7 @@ export default function MonitorStats(){
  const grupos=useMemo(()=>Array.from(new Set(registros.map(r=>r.grupo))).sort((a,b)=>a.localeCompare(b)),[registros]);
  const totalSalidas=registros.filter(r=>grupoFiltro==="todos"||r.grupo===grupoFiltro).length,totalAlumnos=filas.length,alumnosFuera=filas.filter(f=>f.fuera).length;
  return <div className={ui.dashboard}>
-  <section className={ui.pageIntro}><div><span className={ui.eyebrow}>CONTROL ESCOLAR</span><h1 className={ui.pageTitle}>Estadísticas</h1></div></section>
+  <section className={ui.pageIntro}><div><h1 className={ui.pageTitle}>Estadísticas</h1></div></section>
   <section className={ui.statsGrid}>
    <div className={ui.statCard}><span className={ui.statLabel}>Salidas hoy</span><strong className={ui.statValue}>{totalSalidas}</strong><span className={ui.statHint}>Todos los profesores</span></div>
    <div className={ui.statCard}><span className={ui.statLabel}>Alumnos</span><strong className={ui.statValue}>{totalAlumnos}</strong><span className={ui.statHint}>Con salida registrada hoy</span></div>
