@@ -81,13 +81,15 @@ export default function Horarios() {
                 <tr><th>Periodo</th><th>Hora</th>{DIAS.map(d=><th key={d}>{d}</th>)}</tr>
               </thead>
               <tbody>
-                {HORARIOS.filter(([p])=>p!=="RECESO").map(([periodo,hora])=>{
+                {HORARIOS.map(([periodo,hora])=>{
                   const filas=DIAS.map(d=>MIS_HORARIOS.find(x=>x.dia===d&&x.periodo===periodo));
                   return (
                     <tr key={periodo}>
-                      <td><strong>{periodo}</strong></td>
-                      <td>{hora}</td>
-                      {filas.map((f,i)=><td key={DIAS[i]}>{f?<span className={ui.groupBadge}>{f.grupo}</span>:"—"}</td>)}
+                      <td><strong>{periodo==="RECESO"?"—":periodo}</strong></td>
+                      <td><strong>{hora}</strong></td>
+                      {periodo==="RECESO"
+                        ? <td colSpan={5} style={{textAlign:"center",fontWeight:800,letterSpacing:".04em"}}>RECESO</td>
+                        : filas.map((f,i)=><td key={DIAS[i]}>{f?<span className={ui.groupBadge}>{f.grupo}</span>:"—"}</td>)}
                     </tr>
                   );
                 })}
