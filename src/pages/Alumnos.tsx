@@ -76,6 +76,26 @@ export default function Alumnos({ grupo }: AlumnosProps) {
     setGrupoBloqueado(Array.isArray(activosGrupo) && activosGrupo.length > 0);
   }
 
+  useEffect(() => {
+    void cargar();
+
+    const channel = supabase
+      .channel("alumnos-grupo-" + grupo.id)
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "bano_registros" },
+        () => { void cargar(); }
+      )
+      .subscribe();
+
+    const timer = window.setInterval(() => { void cargar(); }, 2000);
+
+    return () => {
+      window.clearInterval(timer);
+      void supabase.removeChannel(channel);
+    };
+  }, [grupo.id]);
+
   async function agregar() {
     const nombre = nuevo.trim();
     if (!nombre) return;
