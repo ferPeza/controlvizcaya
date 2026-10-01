@@ -44,30 +44,34 @@ export default function Alumnos({ grupo }: AlumnosProps) {
     const lista = alData ?? [];
     setAlumnos(lista);
 
-    if (lista.length) {
-      const ids = lista.map((a) => a.id);
-      const { data: regData } = await supabase
+    if (!lista.length) {
+      setUltimos({});
+      setGrupoBloqueado(false);
+      return;
+    }
+
+    const ids = lista.map((a) => a.id);
+    const [{ data: regData }, { data: activosGrupo }] = await Promise.all([
+      supabase
         .from("bano_registros")
         .select("id,alumno_id,salida,regreso,motivo")
         .in("alumno_id", ids)
-        .order("salida", { ascending: false });
+        .order("salida", { ascending: false }),
+      supabase
+        .from("bano_registros")
+        .select("id,alumno_id,salida,regreso,bano_alumnos!inner(grupo_id)")
+        .eq("bano_alumnos.grupo_id", grupo.id)
+        .is("regreso", null),
+    ]);
 
-      const map: Record<string, Registro> = {};
-      (regData ?? []).forEach((r) => {
-        if (!map[r.alumno_id]) map[r.alumno_id] = r;
-      });
-      setUltimos(map);
-      setGrupoBloqueado(Object.values(map).some((r) => !r.regreso));
-    } else {
-      setUltimos({});
-      setGrupoBloqueado(false);
-    }
+    const map: Record<string, Registro> = {};
+    (regData ?? []).forEach((r) => {
+      if (!map[r.alumno_id]) map[r.alumno_id] = r;
+    });
+
+    setUltimos(map);
+    setGrupoBloqueado((activosGrupo ?? []).length > 0);
   }
-
-  useEffect(() => {
-    cargar();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [grupo.id]);
 
   async function agregar() {
     const nombre = nuevo.trim();
@@ -84,8 +88,27 @@ export default function Alumnos({ grupo }: AlumnosProps) {
   }
 
   async function salir(a: Alumno, motivo: MotivoSalida) {
+    if (motivo === "salio" && grupoBloqueado) {
+      return;
+    }
+
+    // Comprobación final contra Supabase para evitar que dos clics
+    // simultáneos permitan dos permisos de baño en el mismo grupo.
+    if (motivo === "salio") {
+      const { data: activos } = await supabase
+        .from("bano_registros")
+        .select("id,bano_alumnos!inner(grupo_id)")
+        .eq("bano_alumnos.grupo_id", grupo.id)
+        .is("regreso", null);
+
+      if ((activos ?? []).length > 0) {
+        setGrupoBloqueado(true);
+        return;
+      }
+    }
+
     await supabase.from("bano_registros").insert({ alumno_id: a.id, motivo });
-    cargar();
+    await cargar();
   }
 
   async function regresar(reg: Registro) {
