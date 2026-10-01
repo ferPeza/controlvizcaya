@@ -34,7 +34,8 @@ export default function App(){
       {key:"stats" as Vista,label:"Estadísticas",icon:"▥"}
      ];
  return <Shell profesorNombre={profesor.nombre} rol={profesor.rol} active={vista} nav={nav} crumb={crumb} onNavigate={(v)=>setVista(v as Vista)} onGear={()=>setVista("perfil")} onLogout={logout}>
-   {profesor.rol==="monitor" && vista==="monitor" && <Monitor profesor={profesor}/>}\n   {profesor.rol==="monitor" && vista==="stats" && <MonitorStats/>}
+   {profesor.rol==="monitor" && vista==="monitor" && <Monitor profesor={profesor}/>}
+   {profesor.rol==="monitor" && vista==="stats" && <MonitorStats/>}
    {vista==="perfil"&&<Perfil profesor={profesor} onSaved={perfilGuardado} onLogout={logout}/>}
    {profesor.rol==="profesor"&&vista==="grupos"&&<Grupos profesor={profesor} onSelect={elegirGrupo}/>}
    {profesor.rol==="profesor"&&vista==="gestionAlumnos"&&<GestionAlumnos profesor={profesor}/>}
