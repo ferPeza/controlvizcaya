@@ -165,7 +165,7 @@ export default function Alumnos({ grupo }: AlumnosProps) {
           {grupoBloqueado && (
             <div className={ui.groupBathroomLock} role="status">
               <strong>Baño bloqueado</strong>
-              <span>Hay un alumno de este grupo fuera del aula. El permiso de baño se habilitará cuando regrese.</span>
+              <span>Hay un alumno fuera por Baño. El permiso de Baño se habilitará cuando ese alumno regrese.</span>
             </div>
           )}
           {bloquearBanoHorario && (
