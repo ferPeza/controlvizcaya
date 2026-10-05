@@ -58,6 +58,7 @@ export default function Alumnos({ grupo }: AlumnosProps) {
   const [alumnos, setAlumnos] = useState<Alumno[] | null>(null);
   const [ultimos, setUltimos] = useState<Record<string, Registro>>({});
   const [grupoBloqueado, setGrupoBloqueado] = useState(false);
+  const [alumnosFuera, setAlumnosFuera] = useState(0);
   const [, setHoraActual] = useState(() => Date.now());
   const bloquearBanoHorario = estaBloqueadoPorHorario();
   const bloquearBano = grupoBloqueado || bloquearBanoHorario;
@@ -75,6 +76,7 @@ export default function Alumnos({ grupo }: AlumnosProps) {
     if (!lista.length) {
       setUltimos({});
       setGrupoBloqueado(false);
+      setAlumnosFuera(0);
       return;
     }
 
@@ -89,9 +91,8 @@ export default function Alumnos({ grupo }: AlumnosProps) {
       // no dependa de relaciones anidadas de Supabase/RLS.
       supabase
         .from("bano_registros")
-        .select("id,alumno_id")
+        .select("id,alumno_id,motivo")
         .in("alumno_id", ids)
-        .eq("motivo", "salio")
         .is("regreso", null),
     ]);
 
@@ -101,7 +102,9 @@ export default function Alumnos({ grupo }: AlumnosProps) {
     });
 
     setUltimos(map);
-    setGrupoBloqueado(Array.isArray(activosGrupo) && activosGrupo.length > 0);
+    const activos = activosGrupo ?? [];
+    setAlumnosFuera(activos.length);
+    setGrupoBloqueado(activos.some((r) => r.motivo === "salio"));
   }
 
   useEffect(() => {
@@ -130,37 +133,20 @@ export default function Alumnos({ grupo }: AlumnosProps) {
   }, [grupo.id]);
 
   async function salir(a: Alumno, motivo: MotivoSalida) {
-    if (motivo === "salio" && (grupoBloqueado || estaBloqueadoPorHorario())) {
-      return;
-    }
-
-    // Comprobación final contra Supabase para evitar que dos clics
-    // simultáneos permitan dos permisos de baño en el mismo grupo.
-    if (motivo === "salio") {
-      const { data: alumnosGrupo } = await supabase
-        .from("bano_alumnos")
-        .select("id")
-        .eq("grupo_id", grupo.id);
-
-      const idsGrupo = (alumnosGrupo ?? []).map((alumno) => alumno.id);
-
-      if (!idsGrupo.length) return;
-
-      const { data: activos } = await supabase
-        .from("bano_registros")
-        .select("id,alumno_id,motivo")
-        .in("alumno_id", idsGrupo)
-        .eq("motivo", "salio")
-        .is("regreso", null);
-
-      if ((activos ?? []).length > 0) {
-        setGrupoBloqueado(true);
-        return;
-      }
-    }
-
-    await supabase.from("bano_registros").insert({ alumno_id: a.id, motivo });
-    await cargar();
+    if (motivo === "salio" && estaBloqueadoPorHorario()) return;
+    // Relectura previa; para evitar carreras simultáneas se requiere una RPC transaccional en servidor.
+    const { data: alumnosGrupo, error: errorAlumnos } = await supabase.from("bano_alumnos").select("id").eq("grupo_id", grupo.id);
+    if (errorAlumnos) return;
+    const idsGrupo = (alumnosGrupo ?? []).map((alumno) => alumno.id);
+    if (!idsGrupo.length) return;
+    const { data: activos, error: errorActivos } = await supabase.from("bano_registros").select("id,alumno_id,motivo").in("alumno_id", idsGrupo).is("regreso", null);
+    if (errorActivos) return;
+    const abiertos = activos ?? [];
+    if (abiertos.length >= 2) { setAlumnosFuera(abiertos.length); return; }
+    if (abiertos.some((r) => r.alumno_id === a.id)) return;
+    if (motivo === "salio" && abiertos.some((r) => r.motivo === "salio")) { setGrupoBloqueado(true); return; }
+    const { error } = await supabase.from("bano_registros").insert({ alumno_id: a.id, motivo });
+    if (!error) await cargar();
   }
 
   async function regresar(reg: Registro) {
@@ -175,6 +161,7 @@ export default function Alumnos({ grupo }: AlumnosProps) {
           <span className={ui.eyebrow}>GRUPO</span>
           <h1 className={ui.pageTitle}>{grupo.nombre}</h1>
           <p className={ui.pageSubtitle}>Registra y consulta las salidas de tus alumnos.</p>
+          <div className={ui.groupBathroomLock} role="status"><strong>{alumnosFuera}/2 alumnos fuera</strong><span>{alumnosFuera >= 2 ? "Cupo completo: todas las salidas están bloqueadas hasta que regrese alguien." : grupoBloqueado ? "Baño bloqueado mientras el alumno de Baño siga fuera; otros motivos pueden usar el cupo disponible." : "Hay cupo disponible, sujeto a las reglas de horario."}</span></div>
           {grupoBloqueado && (
             <div className={ui.groupBathroomLock} role="status">
               <strong>Baño bloqueado</strong>
@@ -229,8 +216,8 @@ export default function Alumnos({ grupo }: AlumnosProps) {
                       <button
                         key={m.key}
                         className={ui.btn + " " + m.className}
-                        disabled={afuera || (m.key === "salio" && bloquearBano)}
-                        title={m.key === "salio" && bloquearBanoHorario ? "Baño bloqueado por horario" : m.key === "salio" && grupoBloqueado ? "Baño bloqueado: hay un alumno de este grupo fuera" : undefined}
+                        disabled={afuera || alumnosFuera >= 2 || (m.key === "salio" && bloquearBano)}
+                        title={alumnosFuera >= 2 ? "Límite de 2 alumnos fuera alcanzado" : m.key === "salio" && bloquearBanoHorario ? "Baño bloqueado por horario" : m.key === "salio" && grupoBloqueado ? "Baño bloqueado: ya hay un alumno fuera por Baño" : undefined}
                         onClick={() => salir(a, m.key)}
                       >
                         {m.label}
